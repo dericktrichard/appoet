@@ -1,0 +1,154 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Pricing tiers that users can purchase
+model Tier {
+  id          String   @id @default(cuid())
+  name        String   // e.g., "Single Poem", "Five Pack", "Ten Pack"
+  description String?
+  poemCount   Int      // Number of poems included
+  price       Float    // Price in USD
+  bonusPoems  Int      @default(0) // e.g., "buy 5 get 1 free" = 1
+  deliveryHours Int    @default(24) // Estimated delivery time
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  orders      Order[]
+}
+
+// Main order record created after payment
+model Order {
+  id              String       @id @default(cuid())
+  orderNumber     String       @unique @default(cuid())
+  status          OrderStatus  @default(PENDING)
+  
+  // Tier information
+  tierId          String
+  tier            Tier         @relation(fields: [tierId], references: [id])
+  poemsRemaining  Int          // Tracks how many poems user can still request
+  
+  // Contact information
+  email           String
+  
+  // Payment tracking
+  payment         Payment?
+  
+  // Poem requests
+  poemRequests    PoemRequest[]
+  
+  // Timestamps
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  @@index([email])
+  @@index([status])
+}
+
+enum OrderStatus {
+  PENDING      // Order created, awaiting payment
+  PAID         // Payment confirmed
+  QUEUED       // At least one poem request submitted
+  IN_PROGRESS  // Poet is working on it
+  DELIVERED    // All poems delivered
+  CANCELLED    // Order cancelled/refunded
+}
+
+// Payment verification record
+model Payment {
+  id                String        @id @default(cuid())
+  orderId           String        @unique
+  order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  provider          PaymentProvider
+  providerPaymentId String       @unique // PayPal transaction ID or Stripe payment intent ID
+  amount            Float
+  currency          String       @default("USD")
+  status            PaymentStatus
+  
+  // Webhook verification
+  webhookVerified   Boolean      @default(false)
+  webhookData       String?      @db.Text // JSON string of webhook payload
+  
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  
+  @@index([providerPaymentId])
+}
+
+enum PaymentProvider {
+  PAYPAL
+  STRIPE
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// Individual poem request within an order
+model PoemRequest {
+  id              String          @id @default(cuid())
+  orderId         String
+  order           Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  // Request details
+  poemType        PoemType
+  theme           String          @db.Text
+  tone            String?
+  constraints     String?         @db.Text // JSON string for length, dedication, etc.
+  surpriseMe      Boolean         @default(false)
+  
+  // Fulfillment
+  status          PoemStatus      @default(PENDING)
+  poemContent     String?         @db.Text
+  deliveredAt     DateTime?
+  estimatedDelivery DateTime?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  @@index([orderId])
+  @@index([status])
+}
+
+enum PoemType {
+  HAIKU
+  FREE_VERSE
+  SONNET
+  LIMERICK
+  ACROSTIC
+  CUSTOM
+}
+
+enum PoemStatus {
+  PENDING       // Waiting to be worked on
+  IN_PROGRESS   // Poet is writing
+  COMPLETED     // Written, ready to send
+  DELIVERED     // Sent to customer
+}
+
+// Sample poems displayed on the landing page
+model SamplePoem {
+  id          String   @id @default(cuid())
+  title       String
+  content     String   @db.Text
+  poemType    PoemType
+  visible     Boolean  @default(true)
+  displayOrder Int     @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([visible, displayOrder])
+}
