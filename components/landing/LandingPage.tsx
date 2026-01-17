@@ -141,7 +141,7 @@ export default function LandingPage() {
                 isDark ? 'text-white' : 'text-slate-900'
               }`}
             >
-              Appoet
+              APPOET
             </motion.h1>
 
             <motion.p
@@ -153,7 +153,7 @@ export default function LandingPage() {
               }`}
               style={{ fontFamily: 'Nunito, sans-serif' }}
             >
-              Commission poetry written with care, delivered with meaning.
+              Commission poetry written with care, delivered with human meaning.
             </motion.p>
 
             {/* Featured Poem */}
@@ -202,7 +202,7 @@ export default function LandingPage() {
               }`}
               style={{ fontFamily: 'Nunito, sans-serif' }}
             >
-              No AI. No algorithms. Just authentic words.
+              I do no AI. Just authentic words.
             </motion.p>
           </motion.div>
         </div>
@@ -221,14 +221,14 @@ export default function LandingPage() {
             <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${
               isDark ? 'text-white' : 'text-slate-900'
             }`}>
-              Honest Pricing
+              Tier Pricing
             </h2>
             <p className={`text-lg ${
               isDark ? 'text-slate-400' : 'text-slate-600'
             }`}
             style={{ fontFamily: 'Nunito, sans-serif' }}
             >
-              Simple tiers for different needs
+              Choose according to your needs.
             </p>
           </motion.div>
 
@@ -276,11 +276,11 @@ export default function LandingPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <Clock className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span>24-hour delivery</span>
+                  <span>24-hour delivery upon accepting</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Heart className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span className="font-semibold">Request 2 poems, get 1 extra free</span>
+                  <span className="font-semibold">Request 5 poems, get 1 extra free</span>
                 </li>
               </ul>
 
@@ -349,7 +349,7 @@ export default function LandingPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className={isDark ? 'text-white' : 'text-slate-900'}>•</span>
-                  <span>Any style: Sonnet, Free Verse, Acrostic, Custom</span>
+                  <span>Any style you choose: Sonnet, Free Verse, Acrostic, Custom</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className={isDark ? 'text-white' : 'text-slate-900'}>•</span>
@@ -357,7 +357,7 @@ export default function LandingPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <Clock className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span>48-hour delivery</span>
+                  <span>Based on your pay you can request for short delivery time</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Heart className="w-4 h-4 mt-0.5 flex-shrink-0" />
@@ -372,7 +372,7 @@ export default function LandingPage() {
               }`}
               style={{ fontFamily: 'Nunito, sans-serif' }}
               >
-                Choose Custom Poem
+                Book Custom Poem
               </button>
             </motion.div>
           </div>
@@ -399,7 +399,7 @@ export default function LandingPage() {
             }`}
             style={{ fontFamily: 'Nunito, sans-serif' }}
             >
-              A glimpse into the craft
+              A glimpse into the craft I offer
             </p>
           </motion.div>
 
@@ -472,12 +472,12 @@ export default function LandingPage() {
             style={{ fontFamily: 'Nunito, sans-serif' }}
             >
               <p>
-                Appoet was created to offer something increasingly rare: words written by a real person, 
+                Appoet was created to offer something increasingly rare in this age: words written by a real person, 
                 for a real person, with genuine care and attention.
               </p>
               
               <p>
-                In a world saturated with AI-generated content, this platform exists as a quiet resistance—a 
+                In a world saturated with AI-generated content, this platform exists as a quiet resistance — a 
                 commitment to the craft of poetry, to the weight of carefully chosen words, and to the 
                 human connection that only authentic writing can create.
               </p>
@@ -485,12 +485,13 @@ export default function LandingPage() {
               <p>
                 Every poem commissioned through Appoet is written by me, a poet who believes in the power 
                 of language to capture moments, express what feels inexpressible, and offer comfort or 
-                celebration exactly when it is needed.
+                celebration exactly when it is needed. But if you support me generously I will add more writers
+                or if want to partner so that you can write for others as well please contact me.
               </p>
               
               <p className="pt-4 border-t border-current/20">
                 <span className="font-semibold">My promise:</span> No shortcuts. No templates. 
-                No artificial intelligence. Just thoughtful poetry, crafted for you.
+                No artificial intelligence. Just thoughtful messy poetry, crafted for you, to you.
               </p>
             </div>
           </motion.div>
@@ -508,7 +509,7 @@ export default function LandingPage() {
             }`}
             style={{ fontFamily: 'Nunito, sans-serif' }}
             >
-              © 2026 Appoet. Every poem written by hand, with heart.
+              © 2026 Appoet. Every poem written by hand, with heart to a soul.
             </p>
             <div className="flex gap-6">
               <a 
