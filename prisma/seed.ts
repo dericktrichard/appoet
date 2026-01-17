@@ -1,4 +1,3 @@
-// prisma/seed.ts
 import { PrismaClient, PoemType } from '@prisma/client';
 
 const prisma = new PrismaClient();
