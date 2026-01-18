@@ -9,9 +9,10 @@
     "lint": "eslint"
   },
   "prisma": {
-  "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.3",
     "@prisma/client": "^5.22.0",
     "framer-motion": "^12.26.2",
     "lucide-react": "^0.562.0",
