@@ -1,18 +1,22 @@
-import paypal from '@paypal/checkout-server-sdk';
+import { client, Environment } from '@paypal/paypal-server-sdk';
 
-function environment() {
-  const clientId = process.env.PAYPAL_CLIENT_ID!;
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET!;
-  const mode = process.env.PAYPAL_MODE || 'sandbox';
+const clientId = process.env.PAYPAL_CLIENT_ID!;
+const clientSecret = process.env.PAYPAL_CLIENT_SECRET!;
+const mode = process.env.PAYPAL_MODE || 'sandbox';
 
-  if (mode === 'production') {
-    return new paypal.core.LiveEnvironment(clientId, clientSecret);
-  }
-  return new paypal.core.SandboxEnvironment(clientId, clientSecret);
-}
+const environment = mode === 'production' 
+  ? Environment.Production 
+  : Environment.Sandbox;
 
-function client() {
-  return new paypal.core.PayPalHttpClient(environment());
-}
-
-export { client };
+export const paypalClient = client({
+  clientCredentialsAuthCredentials: {
+    oAuthClientId: clientId,
+    oAuthClientSecret: clientSecret,
+  },
+  environment,
+  logging: {
+    logLevel: mode === 'production' ? 'error' : 'info',
+    logRequest: { logBody: true },
+    logResponse: { logHeaders: true },
+  },
+});

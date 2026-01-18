@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import paypal from '@paypal/checkout-server-sdk';
-import { client } from '@/lib/paypal';
+import { paypalClient } from '@/lib/paypal';
 import { prisma } from '@/lib/prisma';
 import { sendOrderConfirmationEmail } from '@/lib/email';
+import { OrdersController } from '@paypal/paypal-server-sdk';
 
 export async function POST(request: Request) {
   try {
@@ -35,12 +35,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // Capture the payment with PayPal
-    const captureRequest = new paypal.orders.OrdersCaptureRequest(paypalOrderId);
-    captureRequest.requestBody({});
+    // Capture the payment with PayPal using new SDK
+    const ordersController = new OrdersController(paypalClient);
+    
+    const collect = {
+      id: paypalOrderId,
+      prefer: 'return=representation',
+    };
 
-    const capture = await client().execute(captureRequest);
-    const captureResult = capture.result;
+    const { body: captureResult } = await ordersController.ordersCapture(collect);
 
     console.log('Payment captured:', captureResult.id);
 
@@ -53,8 +56,16 @@ export async function POST(request: Request) {
     }
 
     // Get capture details
-    const captureDetails = captureResult.purchase_units[0].payments.captures[0];
-    const amountPaid = parseFloat(captureDetails.amount.value);
+    const captureDetails = captureResult.purchaseUnits?.[0]?.payments?.captures?.[0];
+    
+    if (!captureDetails) {
+      return NextResponse.json(
+        { error: 'Payment capture details not found' },
+        { status: 400 }
+      );
+    }
+
+    const amountPaid = parseFloat(captureDetails.amount?.value || '0');
 
     // Verify amount matches tier price
     if (Math.abs(amountPaid - order.tier.price) > 0.01) {
@@ -81,11 +92,11 @@ export async function POST(request: Request) {
         data: {
           orderId: order.id,
           provider: 'PAYPAL',
-          providerPaymentId: captureResult.id,
+          providerPaymentId: captureResult.id!,
           amount: amountPaid,
           currency: 'USD',
           status: 'COMPLETED',
-          webhookVerified: true, // We verified it ourselves via API
+          webhookVerified: true,
           webhookData: JSON.stringify(captureResult),
         },
       });
