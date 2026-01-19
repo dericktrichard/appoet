@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Moon, Sun, Feather, Clock, Sparkles, User, Heart } from 'lucide-react';
+import CheckoutModal from '@/components/checkout/CheckoutModal';
 
 interface Tier {
   id: string;
@@ -26,6 +27,10 @@ export default function LandingPage() {
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [samples, setSamples] = useState<SamplePoem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [checkoutModal, setCheckoutModal] = useState<{
+    isOpen: boolean;
+    tier: Tier | null;
+  }>({ isOpen: false, tier: null });
 
   useEffect(() => {
     async function fetchData() {
@@ -346,7 +351,9 @@ export default function LandingPage() {
                       </li>
                     </ul>
 
-                    <button className={`w-full py-3 rounded-lg font-semibold transition-all ${
+                    <button
+                      onClick={() => setCheckoutModal({ isOpen: true, tier })}
+                      className={`w-full py-3 rounded-lg font-semibold transition-all ${
                       isPopular
                         ? isDark
                           ? 'bg-white text-black hover:bg-slate-100'
@@ -536,6 +543,19 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Checkout Modal */}
+      {checkoutModal.tier && (
+        <CheckoutModal
+          isOpen={checkoutModal.isOpen}
+          onClose={() => setCheckoutModal({ isOpen: false, tier: null })}
+          tierId={checkoutModal.tier.id}
+          tierName={checkoutModal.tier.name}
+          tierPrice={checkoutModal.tier.price}
+          tierDescription={checkoutModal.tier.description}
+          isDark={isDark}
+        />
+      )}
     </div>
   );
 }
