@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       prefer: 'return=representation',
     };
 
-    const { body: captureResult } = await ordersController.ordersCapture(collect);
+    const { result: captureResult } = await ordersController.captureOrder(collect);
 
     console.log('Payment captured:', captureResult.id);
 
