@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
-import paypal from '@paypal/checkout-server-sdk';
-import { client } from '@/lib/paypal';
+import { paypalClient } from '@/lib/paypal';
 import { prisma } from '@/lib/prisma';
+import { 
+  OrdersController, 
+  CheckoutPaymentIntent, 
+  ItemCategory,
+  OrderApplicationContextLandingPage,
+  OrderApplicationContextUserAction,
+} from '@paypal/paypal-server-sdk';
 
 export async function POST(request: Request) {
   try {
@@ -46,54 +52,58 @@ export async function POST(request: Request) {
       },
     });
 
-    // Create PayPal order
-    const paypalRequest = new paypal.orders.OrdersCreateRequest();
-    paypalRequest.prefer('return=representation');
-    paypalRequest.requestBody({
-      intent: 'CAPTURE',
-      purchase_units: [
-        {
-          reference_id: order.id,
-          description: `${tier.name} - Appoet Poetry Commission`,
-          amount: {
-            currency_code: 'USD',
-            value: tier.price.toFixed(2),
-            breakdown: {
-              item_total: {
-                currency_code: 'USD',
-                value: tier.price.toFixed(2),
+    // Create PayPal order using new SDK
+    const ordersController = new OrdersController(paypalClient);
+    
+    const collect = {
+      body: {
+        intent: CheckoutPaymentIntent.Capture,
+        purchaseUnits: [
+          {
+            referenceId: order.id,
+            description: `${tier.name} - Appoet Poetry Commission`,
+            amount: {
+              currencyCode: 'USD',
+              value: tier.price.toFixed(2),
+              breakdown: {
+                itemTotal: {
+                  currencyCode: 'USD',
+                  value: tier.price.toFixed(2),
+                },
               },
             },
+            items: [
+              {
+                name: tier.name,
+                description: tier.description || 'Custom poetry commission',
+                unitAmount: {
+                  currencyCode: 'USD',
+                  value: tier.price.toFixed(2),
+                },
+                quantity: '1',
+                category: ItemCategory.DigitalGoods,
+              },
+            ],
           },
-          items: [
-            {
-              name: tier.name,
-              description: tier.description || 'Custom poetry commission',
-              unit_amount: {
-                currency_code: 'USD',
-                value: tier.price.toFixed(2),
-              },
-              quantity: '1',
-            },
-          ],
+        ],
+        applicationContext: {
+          brandName: 'Appoet',
+          landingPage: OrderApplicationContextLandingPage.NoPreference,
+          userAction: OrderApplicationContextUserAction.PayNow,
+          returnUrl: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success?orderId=${order.id}`,
+          cancelUrl: `${process.env.NEXT_PUBLIC_APP_URL}/payment/cancel?orderId=${order.id}`,
         },
-      ],
-      application_context: {
-        brand_name: 'Appoet',
-        landing_page: 'NO_PREFERENCE',
-        user_action: 'PAY_NOW',
-        return_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success?orderId=${order.id}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/cancel?orderId=${order.id}`,
       },
-    });
+      prefer: 'return=representation',
+    };
 
-    const paypalOrder = await client().execute(paypalRequest);
+    const { result: paypalOrder } = await ordersController.createOrder(collect);
 
-    console.log('PayPal order created:', paypalOrder.result.id);
+    console.log('PayPal order created:', paypalOrder.id);
 
     return NextResponse.json({
       orderId: order.id,
-      paypalOrderId: paypalOrder.result.id,
+      paypalOrderId: paypalOrder.id,
     });
   } catch (error) {
     console.error('Error creating order:', error);
