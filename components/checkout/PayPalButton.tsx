@@ -11,16 +11,6 @@ interface PayPalButtonProps {
   isDark?: boolean;
 }
 
-declare global {
-  interface Window {
-    paypal?: {
-      Buttons: (config: PayPalButtonConfig) => {
-        render: (container: HTMLElement) => void;
-      };
-    };
-  }
-}
-
 interface PayPalButtonConfig {
   style?: {
     layout?: string;
@@ -34,6 +24,16 @@ interface PayPalButtonConfig {
   onCancel: () => void;
 }
 
+declare global {
+  interface Window {
+    paypal?: {
+      Buttons: (config: PayPalButtonConfig) => {
+        render: (container: HTMLElement) => void;
+      };
+    };
+  }
+}
+
 export default function PayPalButton({
   tierId,
   tierName,
@@ -43,6 +43,7 @@ export default function PayPalButton({
   isDark = false,
 }: PayPalButtonProps) {
   const paypalRef = useRef<HTMLDivElement>(null);
+  const orderIdRef = useRef<string | null>(null);
   const [email, setEmail] = useState('');
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [showPayPal, setShowPayPal] = useState(false);
@@ -89,6 +90,10 @@ export default function PayPalButton({
               throw new Error(data.error || 'Failed to create order');
             }
 
+            // Store orderId in ref for later use in onApprove
+            orderIdRef.current = data.orderId;
+            console.log('Order created:', data.orderId, 'PayPal Order:', data.paypalOrderId);
+
             return data.paypalOrderId;
           } catch (error) {
             console.error('Error creating order:', error);
@@ -98,9 +103,19 @@ export default function PayPalButton({
             setLoading(false);
           }
         },
-                  onApprove: async (data: { orderID: string }) => {
+        onApprove: async (data: { orderID: string }) => {
           try {
             setLoading(true);
+            
+            // Get the orderId from ref
+            const orderId = orderIdRef.current;
+            
+            if (!orderId) {
+              throw new Error('Order ID not found');
+            }
+
+            console.log('Capturing payment for order:', orderId, 'PayPal Order:', data.orderID);
+            
             const response = await fetch('/api/orders/capture', {
               method: 'POST',
               headers: {
@@ -108,7 +123,7 @@ export default function PayPalButton({
               },
               body: JSON.stringify({
                 paypalOrderId: data.orderID,
-                orderId: data.orderID, // We'll need to store this differently
+                orderId: orderId,
               }),
             });
 
@@ -126,7 +141,7 @@ export default function PayPalButton({
             setLoading(false);
           }
         },
-                  onError: (err: Error) => {
+        onError: (err: Error) => {
           console.error('PayPal error:', err);
           onError('Payment failed. Please try again.');
           setLoading(false);

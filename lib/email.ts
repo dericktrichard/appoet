@@ -28,9 +28,12 @@ export async function sendOrderConfirmationEmail({
   deliveryHours,
 }: OrderConfirmationEmailProps) {
   try {
+    // In development with onboarding@resend.dev, emails can only go to your verified email
+    const recipientEmail = process.env.NODE_ENV === 'production' ? to : 'dericktrichard@gmail.com';
+    
     const { data, error } = await resend.emails.send({
       from: 'Appoet <onboarding@resend.dev>', // Resend's development sender
-      to: [to],
+      to: [recipientEmail],
       subject: `Order Confirmed - ${orderNumber}`,
       html: `
         <!DOCTYPE html>
