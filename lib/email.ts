@@ -1,9 +1,11 @@
+// lib/email.ts
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 interface OrderConfirmationEmailProps {
   to: string;
+  orderId: string;
   orderNumber: string;
   tierName: string;
   price: number;
@@ -21,6 +23,7 @@ interface PoemDeliveryEmailProps {
 
 export async function sendOrderConfirmationEmail({
   to,
+  orderId,
   orderNumber,
   tierName,
   price,
@@ -145,7 +148,7 @@ export async function sendOrderConfirmationEmail({
               </p>
               
               <div style="text-align: center;">
-                <a href="${process.env.NEXT_PUBLIC_APP_URL}/request?order=${orderNumber}" class="cta-button">
+                <a href="${process.env.NEXT_PUBLIC_APP_URL}/request?orderId=${orderId}" class="cta-button">
                   Submit Poem Request
                 </a>
               </div>

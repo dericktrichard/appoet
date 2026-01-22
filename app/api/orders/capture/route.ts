@@ -105,6 +105,7 @@ export async function POST(request: Request) {
     // Send confirmation email
     await sendOrderConfirmationEmail({
       to: order.email,
+      orderId: order.id,
       orderNumber: order.orderNumber,
       tierName: order.tier.name,
       price: order.tier.price,
