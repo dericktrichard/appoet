@@ -23,7 +23,7 @@ interface SamplePoem {
 }
 
 export default function LandingPage() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true); // Default to dark mode
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [samples, setSamples] = useState<SamplePoem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +31,21 @@ export default function LandingPage() {
     isOpen: boolean;
     tier: Tier | null;
   }>({ isOpen: false, tier: null });
+
+  // Load theme preference from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setIsDark(savedTheme === 'dark');
+    }
+  }, []);
+
+  // Save theme preference
+  const toggleTheme = () => {
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -119,7 +134,7 @@ export default function LandingPage() {
             </a>
             
             <button
-              onClick={() => setIsDark(!isDark)}
+              onClick={toggleTheme}
               className={`p-2 rounded-full transition-all ${
                 isDark 
                   ? 'hover:bg-white/10 text-white' 
@@ -171,7 +186,7 @@ export default function LandingPage() {
                 isDark ? 'text-white' : 'text-slate-900'
               }`}
             >
-              Appoet
+              APPOET
             </motion.h1>
 
             <motion.p
@@ -200,7 +215,7 @@ export default function LandingPage() {
                 isDark ? 'text-slate-300' : 'text-slate-700'
               }`}>
                 Words carefully chosen,<br />
-                Each line a gentle offering—<br />
+                Each line a gentle offering,<br />
                 Not from circuits, but soul.
               </p>
             </motion.div>
@@ -218,7 +233,7 @@ export default function LandingPage() {
               }`}
               style={{ fontFamily: 'Nunito, sans-serif' }}
             >
-              Request Your Poem
+              Request Your Poem Today
             </motion.button>
 
             <motion.p
@@ -249,7 +264,7 @@ export default function LandingPage() {
             <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${
               isDark ? 'text-white' : 'text-slate-900'
             }`}>
-              Honest Pricing
+              Tier Pricing
             </h2>
             <p className={`text-lg ${
               isDark ? 'text-slate-400' : 'text-slate-600'
@@ -394,7 +409,7 @@ export default function LandingPage() {
             }`}
             style={{ fontFamily: 'Nunito, sans-serif' }}
             >
-              A glimpse into the craft
+              A glimpse into my craft
             </p>
           </motion.div>
 
@@ -509,7 +524,7 @@ export default function LandingPage() {
             }`}
             style={{ fontFamily: 'Nunito, sans-serif' }}
             >
-              © 2026 Appoet. Every poem written by hand, with heart.
+              © 2026 Appoet. Every poem written by hand, with heart, to your soul.
             </p>
             <div className="flex gap-6">
               <a 
