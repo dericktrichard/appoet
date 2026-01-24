@@ -1,8 +1,5 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -13,12 +10,15 @@ datasource db {
 // Pricing tiers that users can purchase
 model Tier {
   id          String   @id @default(cuid())
-  name        String   // e.g., "Single Poem", "Five Pack", "Ten Pack"
+  name        String   // e.g., "Quick Poem", "Custom Poem"
   description String?
-  poemCount   Int      // Number of poems included
-  price       Float    // Price in USD
-  bonusPoems  Int      @default(0) // e.g., "buy 5 get 1 free" = 1
-  deliveryHours Int    @default(24) // Estimated delivery time
+  basePrice   Float    // Base price (e.g., 0.99 for Quick, 1.99 for Custom)
+  minPrice    Float?   // Minimum price for custom tier
+  maxPrice    Float?   // Maximum recommended price
+  basePoemCount Int    // Base number of poems (1 for Quick, 2 for Custom)
+  bonusPoems  Int      @default(1) // Bonus for first-time customers
+  baseDeliveryHours Int @default(24) // Base delivery time
+  allowCustomization Boolean @default(true) // Whether user can choose type/mood
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -39,6 +39,15 @@ model Order {
   
   // Contact information
   email           String
+  
+  // First-time customer tracking
+  isFirstTime     Boolean      @default(false)
+  
+  // Actual amount paid (important for Custom tier)
+  amountPaid      Float
+  
+  // Calculated delivery hours based on amount paid
+  deliveryHours   Int          @default(24)
   
   // Payment tracking
   payment         Payment?
