@@ -14,10 +14,11 @@ async function main() {
     data: {
       name: 'Quick Poem',
       description: 'Perfect for quick gifts, social media, and greeting cards',
-      poemCount: 2, // User can request 2 poems
-      price: 0.99,
-      bonusPoems: 1, // Buy 2, get 1 free = 3 total
-      deliveryHours: 24,
+      basePrice: 0.99,
+      basePoemCount: 1, // 1 poem base
+      bonusPoems: 1, // +1 for first-time customers
+      baseDeliveryHours: 24,
+      allowCustomization: false, // No customization for Quick Poem
       active: true,
     },
   });
@@ -26,10 +27,13 @@ async function main() {
     data: {
       name: 'Custom Poem',
       description: 'Fully customized poetry for special occasions and meaningful gifts',
-      poemCount: 2, // User can request 2 poems
-      price: 1.99,
-      bonusPoems: 1, // Buy 2, get 1 free = 3 total
-      deliveryHours: 48,
+      basePrice: 1.99,
+      minPrice: 1.99,
+      maxPrice: 10.00, // Suggested max
+      basePoemCount: 2, // 2 poems base
+      bonusPoems: 1, // +1 for first-time customers
+      baseDeliveryHours: 12, // Base 12 hours, faster if they pay more
+      allowCustomization: true, // Full customization
       active: true,
     },
   });
