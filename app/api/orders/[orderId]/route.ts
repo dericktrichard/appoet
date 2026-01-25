@@ -51,7 +51,8 @@ export async function GET(
       email: order.email,
       poemsRemaining: order.poemsRemaining,
       tierName: order.tier.name,
-      deliveryHours: order.tier.deliveryHours,
+      deliveryHours: order.deliveryHours,
+      allowCustomization: order.tier.allowCustomization,
       existingRequests: order.poemRequests,
     });
   } catch (error) {

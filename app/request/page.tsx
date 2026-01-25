@@ -13,6 +13,7 @@ interface OrderDetails {
   poemsRemaining: number;
   tierName: string;
   deliveryHours: number;
+  allowCustomization: boolean;
 }
 
 const POEM_TYPES = [
@@ -73,9 +74,17 @@ export default function PoemRequestPage() {
 
     if (!orderId) return;
 
+    // For Quick Poem (no customization), we don't need theme
+    const needsTheme = orderDetails?.allowCustomization && !surpriseMe;
+
     // Validation
-    if (!surpriseMe && (!poemType || !theme.trim())) {
-      setError('Please select a poem type and provide a theme, or check "Surprise Me"');
+    if (needsTheme && !theme.trim()) {
+      setError('Please provide a theme for your custom poem');
+      return;
+    }
+
+    if (orderDetails?.allowCustomization && !surpriseMe && !poemType) {
+      setError('Please select a poem type or check "Surprise Me"');
       return;
     }
 
@@ -91,10 +100,10 @@ export default function PoemRequestPage() {
         body: JSON.stringify({
           orderId,
           poemType: poemType || 'CUSTOM',
-          theme: theme.trim() || 'Surprise me!',
+          theme: theme.trim() || 'Poet\'s choice',
           tone: tone.trim() || null,
           constraints: constraints.trim() || null,
-          surpriseMe,
+          surpriseMe: surpriseMe || !orderDetails?.allowCustomization,
         }),
       });
 
@@ -214,28 +223,47 @@ export default function PoemRequestPage() {
             </div>
           )}
 
-          {/* Surprise Me Option */}
-          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={surpriseMe}
-                onChange={(e) => setSurpriseMe(e.target.checked)}
-                className="w-5 h-5 rounded border-slate-300 text-slate-900 focus:ring-slate-500"
-              />
-              <div>
-                <p className="font-semibold text-slate-900" style={{ fontFamily: 'Philosopher, Georgia, serif' }}>
-                  <Sparkles className="w-4 h-4 inline mr-1" />
-                  Surprise Me
-                </p>
-                <p className="text-sm text-slate-600" style={{ fontFamily: 'Nunito, sans-serif' }}>
-                  Let me choose the style and theme based on your order
-                </p>
+          {/* Surprise Me Option or Quick Poem Notice */}
+          {!orderDetails?.allowCustomization ? (
+            // Quick Poem - Show informational message
+            <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
+              <div className="flex items-start gap-3">
+                <Sparkles className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" />
+                <div>
+                  <p className="font-bold text-blue-900 mb-2" style={{ fontFamily: 'Philosopher, Georgia, serif' }}>
+                    Quick Poem - Poet&apos;s Choice
+                  </p>
+                  <p className="text-sm text-blue-800 leading-relaxed" style={{ fontFamily: 'Nunito, sans-serif' }}>
+                    For Quick Poems, I&apos;ll choose the perfect style and craft something special. 
+                    Simply click submit below and I&apos;ll create a thoughtful poem for you within 24 hours.
+                  </p>
+                </div>
               </div>
-            </label>
-          </div>
+            </div>
+          ) : (
+            // Custom Poem - Show Surprise Me checkbox
+            <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={surpriseMe}
+                  onChange={(e) => setSurpriseMe(e.target.checked)}
+                  className="w-5 h-5 rounded border-slate-300 text-slate-900 focus:ring-slate-500"
+                />
+                <div>
+                  <p className="font-semibold text-slate-900" style={{ fontFamily: 'Philosopher, Georgia, serif' }}>
+                    <Sparkles className="w-4 h-4 inline mr-1" />
+                    Surprise Me
+                  </p>
+                  <p className="text-sm text-slate-600" style={{ fontFamily: 'Nunito, sans-serif' }}>
+                    Let me choose the style and theme based on your order
+                  </p>
+                </div>
+              </label>
+            </div>
+          )}
 
-          {!surpriseMe && (
+          {orderDetails?.allowCustomization && !surpriseMe && (
             <>
               {/* Poem Type */}
               <div>
@@ -284,7 +312,7 @@ export default function PoemRequestPage() {
                   onChange={(e) => setTheme(e.target.value)}
                   rows={4}
                   placeholder="What should this poem be about? (e.g., my mother's birthday, first day of autumn, a lost friend...)"
-                  className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-none"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-300 text-slate-900 placeholder-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-none"
                   style={{ fontFamily: 'Nunito, sans-serif' }}
                 />
               </div>
@@ -300,7 +328,7 @@ export default function PoemRequestPage() {
                   value={tone}
                   onChange={(e) => setTone(e.target.value)}
                   placeholder="e.g., joyful, melancholic, playful, reflective..."
-                  className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-none"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-300 text-slate-900 placeholder-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-none"
                   style={{ fontFamily: 'Nunito, sans-serif' }}
                 />
               </div>
@@ -316,7 +344,7 @@ export default function PoemRequestPage() {
                   onChange={(e) => setConstraints(e.target.value)}
                   rows={3}
                   placeholder="Any specific words to include? A dedication? Length preferences? Let me know..."
-                  className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-none"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-300 text-slate-900 placeholder-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-none"
                   style={{ fontFamily: 'Nunito, sans-serif' }}
                 />
               </div>
