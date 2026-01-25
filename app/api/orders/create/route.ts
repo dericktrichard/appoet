@@ -42,12 +42,28 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check if this is a first-time customer (by email)
+    const existingOrders = await prisma.order.count({
+      where: { 
+        email,
+        status: { in: ['PAID', 'QUEUED', 'IN_PROGRESS', 'DELIVERED'] }
+      },
+    });
+    
+    const isFirstTime = existingOrders === 0;
+    
+    // Calculate poems remaining
+    const poemsRemaining = tier.basePoemCount + (isFirstTime ? tier.bonusPoems : 0);
+
     // Create order in our database (PENDING status)
     const order = await prisma.order.create({
       data: {
         tierId: tier.id,
         email,
-        poemsRemaining: tier.poemCount + tier.bonusPoems,
+        poemsRemaining,
+        isFirstTime,
+        amountPaid: tier.basePrice, // Will be updated after payment
+        deliveryHours: tier.baseDeliveryHours,
         status: 'PENDING',
       },
     });
@@ -64,11 +80,11 @@ export async function POST(request: Request) {
             description: `${tier.name} - Appoet Poetry Commission`,
             amount: {
               currencyCode: 'USD',
-              value: tier.price.toFixed(2),
+              value: tier.basePrice.toFixed(2),
               breakdown: {
                 itemTotal: {
                   currencyCode: 'USD',
-                  value: tier.price.toFixed(2),
+                  value: tier.basePrice.toFixed(2),
                 },
               },
             },
@@ -78,7 +94,7 @@ export async function POST(request: Request) {
                 description: tier.description || 'Custom poetry commission',
                 unitAmount: {
                   currencyCode: 'USD',
-                  value: tier.price.toFixed(2),
+                  value: tier.basePrice.toFixed(2),
                 },
                 quantity: '1',
                 category: ItemCategory.DigitalGoods,
