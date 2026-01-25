@@ -8,7 +8,7 @@ export async function GET() {
         active: true,
       },
       orderBy: {
-        price: 'asc',
+        basePrice: 'asc',
       },
     });
 

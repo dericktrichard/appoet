@@ -9,10 +9,13 @@ interface Tier {
   id: string;
   name: string;
   description: string;
-  poemCount: number;
-  price: number;
+  basePrice: number;
+  minPrice?: number;
+  maxPrice?: number;
+  basePoemCount: number;
   bonusPoems: number;
-  deliveryHours: number;
+  baseDeliveryHours: number;
+  allowCustomization: boolean;
 }
 
 interface SamplePoem {
@@ -186,7 +189,7 @@ export default function LandingPage() {
                 isDark ? 'text-white' : 'text-slate-900'
               }`}
             >
-              APPOET
+              Appoet
             </motion.h1>
 
             <motion.p
@@ -215,7 +218,7 @@ export default function LandingPage() {
                 isDark ? 'text-slate-300' : 'text-slate-700'
               }`}>
                 Words carefully chosen,<br />
-                Each line a gentle offering,<br />
+                Each line a gentle offering—<br />
                 Not from circuits, but soul.
               </p>
             </motion.div>
@@ -233,7 +236,7 @@ export default function LandingPage() {
               }`}
               style={{ fontFamily: 'Nunito, sans-serif' }}
             >
-              Request Your Poem Today
+              Request Your Poem
             </motion.button>
 
             <motion.p
@@ -264,7 +267,7 @@ export default function LandingPage() {
             <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${
               isDark ? 'text-white' : 'text-slate-900'
             }`}>
-              Tier Pricing
+              Honest Pricing
             </h2>
             <p className={`text-lg ${
               isDark ? 'text-slate-400' : 'text-slate-600'
@@ -283,7 +286,7 @@ export default function LandingPage() {
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {tiers.map((tier, index) => {
                 const isPopular = tier.name === 'Custom Poem';
-                const totalPoems = tier.poemCount + tier.bonusPoems;
+                const totalPoems = tier.basePoemCount + tier.bonusPoems;
                 
                 return (
                   <motion.div
@@ -329,7 +332,7 @@ export default function LandingPage() {
                     <div className="mb-6">
                       <span className={`text-5xl font-bold ${
                         isDark ? 'text-white' : 'text-slate-900'
-                      }`}>${tier.price.toFixed(2)}</span>
+                      }`}>${tier.basePrice.toFixed(2)}</span>
                       {tier.name === 'Custom Poem' && (
                         <span className={`text-lg ml-2 ${
                           isDark ? 'text-slate-400' : 'text-slate-500'
@@ -356,12 +359,12 @@ export default function LandingPage() {
                     >
                       <li className="flex items-start gap-2">
                         <Clock className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                        <span>{tier.deliveryHours}-hour delivery</span>
+                        <span>{tier.baseDeliveryHours}-hour delivery</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <Heart className="w-4 h-4 mt-0.5 flex-shrink-0" />
                         <span className="font-semibold">
-                          Request {tier.poemCount} poems, get {tier.bonusPoems} extra free ({totalPoems} total)
+                          Request {tier.basePoemCount} poems, get {tier.bonusPoems} extra free ({totalPoems} total)
                         </span>
                       </li>
                     </ul>
@@ -409,7 +412,7 @@ export default function LandingPage() {
             }`}
             style={{ fontFamily: 'Nunito, sans-serif' }}
             >
-              A glimpse into my craft
+              A glimpse into the craft
             </p>
           </motion.div>
 
@@ -501,7 +504,7 @@ export default function LandingPage() {
               <p>
                 Every poem commissioned through Appoet is written by me, a poet who believes in the power 
                 of language to capture moments, express what feels inexpressible, and offer comfort or 
-                celebration exactly when it is needed.
+                celebration exactly when it&apos;s needed.
               </p>
               
               <p className="pt-4 border-t border-current/20">
@@ -524,7 +527,7 @@ export default function LandingPage() {
             }`}
             style={{ fontFamily: 'Nunito, sans-serif' }}
             >
-              © 2026 Appoet. Every poem written by hand, with heart, to your soul.
+              © 2026 Appoet. Every poem written by hand, with heart.
             </p>
             <div className="flex gap-6">
               <a 
@@ -566,7 +569,7 @@ export default function LandingPage() {
           onClose={() => setCheckoutModal({ isOpen: false, tier: null })}
           tierId={checkoutModal.tier.id}
           tierName={checkoutModal.tier.name}
-          tierPrice={checkoutModal.tier.price}
+          tierPrice={checkoutModal.tier.basePrice}
           tierDescription={checkoutModal.tier.description}
           isDark={isDark}
         />
