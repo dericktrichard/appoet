@@ -68,9 +68,9 @@ export async function POST(request: Request) {
     const amountPaid = parseFloat(captureDetails.amount?.value || '0');
 
     // Verify amount matches tier price
-    if (Math.abs(amountPaid - order.tier.price) > 0.01) {
+    if (Math.abs(amountPaid - order.tier.basePrice) > 0.01) {
       console.error('Payment amount mismatch:', {
-        expected: order.tier.price,
+        expected: order.tier.basePrice,
         received: amountPaid,
       });
       return NextResponse.json(
@@ -81,10 +81,13 @@ export async function POST(request: Request) {
 
     // Update order and create payment record
     await prisma.$transaction(async (tx) => {
-      // Update order status
+      // Update order status and actual amount paid
       await tx.order.update({
         where: { id: order.id },
-        data: { status: 'PAID' },
+        data: { 
+          status: 'PAID',
+          amountPaid,
+        },
       });
 
       // Create payment record
@@ -108,9 +111,9 @@ export async function POST(request: Request) {
       orderId: order.id,
       orderNumber: order.orderNumber,
       tierName: order.tier.name,
-      price: order.tier.price,
+      price: order.tier.basePrice,
       poemsRemaining: order.poemsRemaining,
-      deliveryHours: order.tier.deliveryHours,
+      deliveryHours: order.deliveryHours,
     });
 
     console.log('Order confirmed and email sent:', order.orderNumber);

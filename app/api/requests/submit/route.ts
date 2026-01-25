@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
     // Calculate estimated delivery
     const estimatedDelivery = new Date();
-    estimatedDelivery.setHours(estimatedDelivery.getHours() + order.tier.deliveryHours);
+    estimatedDelivery.setHours(estimatedDelivery.getHours() + order.deliveryHours);
 
     // Create poem request and update order
     const poemRequest = await prisma.$transaction(async (tx) => {
