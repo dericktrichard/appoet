@@ -1,4 +1,3 @@
-// lib/email.ts
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -157,6 +156,11 @@ export async function sendOrderConfirmationEmail({
                 <strong>Note:</strong> This is a human-written service. Your poem will be crafted 
                 personally by me—no AI, no templates, just authentic poetry.
               </p>
+              
+              <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 12px;">
+                <strong>Copyright & Ownership:</strong> Upon delivery, you own the poem completely. 
+                All rights transfer to you, and I retain no claim to the work.
+              </p>
             </div>
             
             <div class="footer">
@@ -278,6 +282,11 @@ export async function sendPoemDeliveryEmail({
               
               <p>
                 This poem is yours to keep, share, or hold close. Thank you for trusting me with your words.
+              </p>
+              
+              <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 13px;">
+                <strong>Full Ownership:</strong> This poem is your exclusive property. You may publish, 
+                share, modify, or use it in any way you choose. I retain no rights or claims to this work.
               </p>
               
               <p style="margin-top: 30px; color: #64748b; font-size: 14px;">
