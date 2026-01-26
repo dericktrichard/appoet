@@ -521,7 +521,7 @@ export default function LandingPage() {
         isDark ? 'border-white/10' : 'border-slate-200'
       }`}>
         <div className="max-w-4xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
             <p className={`text-sm ${
               isDark ? 'text-slate-500' : 'text-slate-600'
             }`}
@@ -558,6 +558,20 @@ export default function LandingPage() {
                 Contact
               </a>
             </div>
+          </div>
+          
+          {/* Copyright Notice */}
+          <div className={`pt-6 border-t text-center ${
+            isDark ? 'border-white/10' : 'border-slate-200'
+          }`}>
+            <p className={`text-xs ${
+              isDark ? 'text-slate-500' : 'text-slate-600'
+            }`}
+            style={{ fontFamily: 'Nunito, sans-serif' }}
+            >
+              <strong>Copyright & Ownership:</strong> All commissioned poems become the exclusive property of the customer upon delivery. 
+              The poet retains no rights to the work. You own your poem completely.
+            </p>
           </div>
         </div>
       </footer>
