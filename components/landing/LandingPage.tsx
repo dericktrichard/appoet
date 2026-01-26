@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Moon, Sun, Feather, Clock, Sparkles, User, Heart } from 'lucide-react';
 import CheckoutModal from '@/components/checkout/CheckoutModal';
+import Link from 'next/link';
 
 interface Tier {
   id: string;
@@ -530,6 +531,15 @@ export default function LandingPage() {
               © 2026 Appoet. Every poem written by hand, with heart.
             </p>
             <div className="flex gap-6">
+              <Link
+                href="/check-order" 
+                className={`text-sm transition-colors ${
+                  isDark ? 'text-slate-500 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                }`}
+                style={{ fontFamily: 'Nunito, sans-serif' }}
+              >
+                Check Order
+              </Link>
               <a 
                 href="#" 
                 className={`text-sm transition-colors ${
@@ -570,7 +580,7 @@ export default function LandingPage() {
             style={{ fontFamily: 'Nunito, sans-serif' }}
             >
               <strong>Copyright & Ownership:</strong> All commissioned poems become the exclusive property of the customer upon delivery. 
-              The poet retains no rights to the work. You own your poem completely.
+              The poet retains no rights to the work.
             </p>
           </div>
         </div>
