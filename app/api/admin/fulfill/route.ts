@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
     const updatedRequest = await prisma.poemRequest.update({
       where: { id: requestId },
       data: {
+        poemTitle,
         poemContent,
         status: 'DELIVERED',
         deliveredAt: new Date(),
