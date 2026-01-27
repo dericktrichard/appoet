@@ -23,6 +23,7 @@ interface PoemRequest {
   tone: string | null;
   constraints: string | null;
   status: string;
+  poemTitle: string | null;
   poemContent: string | null;
   createdAt: string;
   estimatedDelivery: string | null;
@@ -396,7 +397,7 @@ export default function FulfillPoemPage() {
                     onChange={(e) => setPoemTitle(e.target.value)}
                     placeholder="e.g., Morning Reflections"
                     disabled={isDelivered}
-                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-none disabled:bg-slate-50 disabled:text-slate-600"
+                    className="w-full px-4 py-3 rounded-lg border border-slate-300 text-slate-900 placeholder-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-none disabled:bg-slate-50 disabled:text-slate-600"
                     style={{ fontFamily: 'Philosopher, Georgia, serif' }}
                   />
                 </div>
@@ -413,7 +414,7 @@ export default function FulfillPoemPage() {
                     rows={16}
                     placeholder="Write the poem here..."
                     disabled={isDelivered}
-                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-none disabled:bg-slate-50 disabled:text-slate-600 font-serif text-lg leading-relaxed"
+                    className="w-full px-4 py-3 rounded-lg border border-slate-300 text-slate-900 placeholder-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-none disabled:bg-slate-50 disabled:text-slate-600 font-serif text-lg leading-relaxed"
                     style={{ fontFamily: 'Philosopher, Georgia, serif' }}
                     required
                   />

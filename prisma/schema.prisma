@@ -121,6 +121,7 @@ model PoemRequest {
   
   // Fulfillment
   status          PoemStatus      @default(PENDING)
+  poemTitle       String?         // Title given by poet
   poemContent     String?         @db.Text
   deliveredAt     DateTime?
   estimatedDelivery DateTime?
